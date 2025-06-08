@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FF Script Quick Register</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+  }
+  #registerBtn {
+    background: #5a67d8;
+    border: none;
+    color: white;
+    padding: 20px 50px;
+    font-size: 1.5rem;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 8px 15px rgba(90,103,216,0.3);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  #registerBtn:hover {
+    background: #434190;
+    box-shadow: 0 10px 20px rgba(67,65,144,0.5);
+  }
+  #registerBtn:disabled {
+    background: #48bb78;
+    box-shadow: 0 10px 20px rgba(72,187,120,0.7);
+    cursor: default;
+  }
+  #message {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    color: #48bb78;
+    font-weight: bold;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<button id="registerBtn">Register</button>
+<div id="message"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+  import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBGr8JbsD0BWAqHkKrLO5d6IdO3GYWeCto",
+    authDomain: "ff-script-login.firebaseapp.com",
+    databaseURL: "https://ff-script-login-default-rtdb.firebaseio.com",
+    projectId: "ff-script-login",
+    storageBucket: "ff-script-login.firebasestorage.app",
+    messagingSenderId: "1051285329458",
+    appId: "1:1051285329458:web:e831bcbef9ffced5474e2b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+
+  const registerBtn = document.getElementById("registerBtn");
+  const messageDiv = document.getElementById("message");
+
+  // Function to generate a random user ID (or you can use any fixed ID)
+  function generateUserId() {
+    return "user_" + Math.floor(Math.random() * 1000000);
+  }
+
+  registerBtn.addEventListener("click", () => {
+    registerBtn.disabled = true;
+    messageDiv.textContent = "Registering...";
+
+    const userId = generateUserId();
+    const timestamp = Date.now();
+
+    set(ref(database, 'users/' + userId), {
+      username: userId,
+      registeredAt: timestamp
+    })
+    .then(() => {
+      messageDiv.textContent = "Registration Complete!";
+      registerBtn.style.backgroundColor = "#48bb78";  // Green
+      registerBtn.textContent = "Registered";
+    })
+    .catch((error) => {
+      messageDiv.textContent = "Error: " + error.message;
+      registerBtn.disabled = false;
+    });
+  });
+</script>
+
+</body>
+</html>
